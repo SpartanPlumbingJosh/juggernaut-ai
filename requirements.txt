@@ -4,3 +4,6 @@ pillow==10.0.1
 requests==2.31.0
 beautifulsoup4==4.12.2
 python-dotenv==1.0.0
+# CUDA-enabled llama-cpp-python for RTX GPUs
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
+llama-cpp-python

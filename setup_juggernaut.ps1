@@ -1,4 +1,4 @@
-# Juggernaut AI - Setup Script
+﻿# Juggernaut AI - Setup Script
 # PowerShell script for easy installation and setup
 
 param(
@@ -7,7 +7,7 @@ param(
     [switch]$SkipDependencies = $false
 )
 
-Write-Host "🚀 Juggernaut AI Setup Script" -ForegroundColor Green
+Write-Host "ðŸš€ Juggernaut AI Setup Script" -ForegroundColor Green
 Write-Host "================================" -ForegroundColor Green
 
 # Check if Python is installed
@@ -17,17 +17,17 @@ try {
     if ($pythonVersion -match "Python 3\.([0-9]+)") {
         $minorVersion = [int]$matches[1]
         if ($minorVersion -ge 11) {
-            Write-Host "✓ Python $pythonVersion found" -ForegroundColor Green
+            Write-Host "âœ“ Python $pythonVersion found" -ForegroundColor Green
         } else {
-            Write-Host "❌ Python 3.11+ required. Found: $pythonVersion" -ForegroundColor Red
+            Write-Host "âŒ Python 3.11+ required. Found: $pythonVersion" -ForegroundColor Red
             exit 1
         }
     } else {
-        Write-Host "❌ Python not found. Please install Python 3.11+" -ForegroundColor Red
+        Write-Host "âŒ Python not found. Please install Python 3.11+" -ForegroundColor Red
         exit 1
     }
 } catch {
-    Write-Host "❌ Python not found. Please install Python 3.11+" -ForegroundColor Red
+    Write-Host "âŒ Python not found. Please install Python 3.11+" -ForegroundColor Red
     exit 1
 }
 
@@ -35,9 +35,9 @@ try {
 Write-Host "Creating installation directory..." -ForegroundColor Yellow
 if (!(Test-Path $InstallPath)) {
     New-Item -ItemType Directory -Path $InstallPath -Force | Out-Null
-    Write-Host "✓ Created directory: $InstallPath" -ForegroundColor Green
+    Write-Host "âœ“ Created directory: $InstallPath" -ForegroundColor Green
 } else {
-    Write-Host "✓ Directory exists: $InstallPath" -ForegroundColor Green
+    Write-Host "âœ“ Directory exists: $InstallPath" -ForegroundColor Green
 }
 
 # Copy project files (assuming they're in the current directory)
@@ -55,9 +55,9 @@ $sourceFiles = @(
 foreach ($file in $sourceFiles) {
     if (Test-Path $file) {
         Copy-Item $file $InstallPath -Force
-        Write-Host "✓ Copied $file" -ForegroundColor Green
+        Write-Host "âœ“ Copied $file" -ForegroundColor Green
     } else {
-        Write-Host "⚠ Warning: $file not found" -ForegroundColor Yellow
+        Write-Host "âš  Warning: $file not found" -ForegroundColor Yellow
     }
 }
 
@@ -68,7 +68,7 @@ foreach ($dir in $directories) {
     $fullPath = Join-Path $InstallPath $dir
     if (!(Test-Path $fullPath)) {
         New-Item -ItemType Directory -Path $fullPath -Force | Out-Null
-        Write-Host "✓ Created directory: $dir" -ForegroundColor Green
+        Write-Host "âœ“ Created directory: $dir" -ForegroundColor Green
     }
 }
 
@@ -76,15 +76,15 @@ foreach ($dir in $directories) {
 Write-Host "Copying frontend files..." -ForegroundColor Yellow
 if (Test-Path "templates\index.html") {
     Copy-Item "templates\index.html" "$InstallPath\templates\" -Force
-    Write-Host "✓ Copied templates/index.html" -ForegroundColor Green
+    Write-Host "âœ“ Copied templates/index.html" -ForegroundColor Green
 }
 if (Test-Path "static\app.css") {
     Copy-Item "static\app.css" "$InstallPath\static\" -Force
-    Write-Host "✓ Copied static/app.css" -ForegroundColor Green
+    Write-Host "âœ“ Copied static/app.css" -ForegroundColor Green
 }
 if (Test-Path "static\app.js") {
     Copy-Item "static\app.js" "$InstallPath\static\" -Force
-    Write-Host "✓ Copied static/app.js" -ForegroundColor Green
+    Write-Host "âœ“ Copied static/app.js" -ForegroundColor Green
 }
 
 # Install Python dependencies
@@ -94,9 +94,9 @@ if (!$SkipDependencies) {
     
     try {
         pip install flask flask_cors requests pillow openpyxl python-docx pdfplumber watchdog tqdm selenium webdriver-manager psutil pydub pyttsx3 pandas
-        Write-Host "✓ Dependencies installed successfully" -ForegroundColor Green
+        Write-Host "âœ“ Dependencies installed successfully" -ForegroundColor Green
     } catch {
-        Write-Host "❌ Failed to install dependencies. Please run manually:" -ForegroundColor Red
+        Write-Host "âŒ Failed to install dependencies. Please run manually:" -ForegroundColor Red
         Write-Host "pip install flask flask_cors requests pillow openpyxl python-docx pdfplumber watchdog tqdm selenium webdriver-manager psutil pydub pyttsx3 pandas" -ForegroundColor Yellow
     }
 }
@@ -109,7 +109,7 @@ if ($GemmaModelPath -ne "") {
         $content = Get-Content $aiEngineFile -Raw
         $content = $content -replace 'model_path="[^"]*"', "model_path=`"$GemmaModelPath`""
         Set-Content $aiEngineFile $content
-        Write-Host "✓ Updated Gemma model path to: $GemmaModelPath" -ForegroundColor Green
+        Write-Host "âœ“ Updated Gemma model path to: $GemmaModelPath" -ForegroundColor Green
     }
 }
 
@@ -117,14 +117,14 @@ if ($GemmaModelPath -ne "") {
 Write-Host "Creating startup script..." -ForegroundColor Yellow
 $startupScript = @"
 # Juggernaut AI Startup Script
-Write-Host "🚀 Starting Juggernaut AI..." -ForegroundColor Green
+Write-Host "ðŸš€ Starting Juggernaut AI..." -ForegroundColor Green
 Set-Location "$InstallPath"
 python app.py
 "@
 
 $startupScriptPath = Join-Path $InstallPath "start_juggernaut.ps1"
 Set-Content $startupScriptPath $startupScript
-Write-Host "✓ Created startup script: start_juggernaut.ps1" -ForegroundColor Green
+Write-Host "âœ“ Created startup script: start_juggernaut.ps1" -ForegroundColor Green
 
 # Create desktop shortcut (optional)
 $createShortcut = Read-Host "Create desktop shortcut? (y/n)"
@@ -141,11 +141,11 @@ if ($createShortcut -eq "y" -or $createShortcut -eq "Y") {
     $Shortcut.Description = "Juggernaut AI - Monster UI"
     $Shortcut.Save()
     
-    Write-Host "✓ Desktop shortcut created" -ForegroundColor Green
+    Write-Host "âœ“ Desktop shortcut created" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "🎉 Setup Complete!" -ForegroundColor Green
+Write-Host "ðŸŽ‰ Setup Complete!" -ForegroundColor Green
 Write-Host "================================" -ForegroundColor Green
 Write-Host "Installation Path: $InstallPath" -ForegroundColor Cyan
 Write-Host ""
@@ -165,4 +165,5 @@ if ($startNow -eq "y" -or $startNow -eq "Y") {
     Set-Location $InstallPath
     python app.py
 }
+
 

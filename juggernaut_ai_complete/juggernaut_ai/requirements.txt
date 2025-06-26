@@ -1,0 +1,24 @@
+flask
+flask_cors
+requests
+pillow
+openpyxl
+python-docx
+pdfplumber
+watchdog
+tqdm
+selenium
+webdriver-manager
+psutil
+pydub
+pyttsx3
+pandas
+# AI model deps (Gemma, etc.):
+torch
+transformers
+sentencepiece
+protobuf
+accelerate
+# Optional (for advanced image features):
+opencv-python
+# (Uncomment and add any extra packages your specific models require)

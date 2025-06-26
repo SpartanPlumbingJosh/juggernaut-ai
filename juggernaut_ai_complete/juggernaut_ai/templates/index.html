@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juggernaut AI - Monster UI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-robot"></i> Juggernaut AI</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Tasks Section -->
+                <div class="sidebar-section">
+                    <h3 class="section-title" data-section="tasks">
+                        <i class="fas fa-tasks"></i> Tasks
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </h3>
+                    <div class="section-content" id="tasks-content">
+                        <div class="sidebar-item" data-action="new-chat">
+                            <i class="fas fa-plus"></i> New Chat
+                        </div>
+                        <div class="sidebar-item" data-action="file-upload">
+                            <i class="fas fa-upload"></i> Upload File
+                        </div>
+                        <div class="sidebar-item" data-action="image-gen">
+                            <i class="fas fa-image"></i> Generate Image
+                        </div>
+                        <div class="sidebar-item" data-action="browser-control">
+                            <i class="fas fa-globe"></i> Browser Control
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Section -->
+                <div class="sidebar-section">
+                    <h3 class="section-title" data-section="system">
+                        <i class="fas fa-cog"></i> System
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </h3>
+                    <div class="section-content" id="system-content">
+                        <div class="sidebar-item" data-action="system-status">
+                            <i class="fas fa-heartbeat"></i> System Status
+                        </div>
+                        <div class="sidebar-item" data-action="chat-history">
+                            <i class="fas fa-history"></i> Chat History
+                        </div>
+                        <div class="sidebar-item" data-action="file-manager">
+                            <i class="fas fa-folder"></i> File Manager
+                        </div>
+                        <div class="sidebar-item" data-action="settings">
+                            <i class="fas fa-sliders-h"></i> Settings
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button class="mobile-sidebar-toggle" id="mobileSidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Juggernaut AI Assistant</h1>
+                </div>
+                <div class="header-right">
+                    <div class="status-indicator" id="statusIndicator">
+                        <i class="fas fa-circle"></i>
+                        <span>Connecting...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Tabs -->
+            <div class="chat-tabs" id="chatTabs">
+                <div class="tab active" data-chat-id="chat_1">
+                    <span>Chat 1</span>
+                    <button class="tab-close"><i class="fas fa-times"></i></button>
+                </div>
+                <button class="new-tab-btn" id="newTabBtn">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Chat Interface -->
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message">
+                            <i class="fas fa-robot"></i>
+                            <h3>Welcome to Juggernaut AI</h3>
+                            <p>Your powerful AI assistant is ready to help. Start a conversation or use the sidebar to access various features.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <textarea id="chatInput" placeholder="Type your message here..." rows="1"></textarea>
+                            <button id="sendBtn" class="send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Upload Area -->
+                <div class="upload-area" id="uploadArea" style="display: none;">
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Upload Files</h3>
+                        <p>Drag and drop files here or click to browse</p>
+                        <input type="file" id="fileInput" multiple hidden>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            Choose Files
+                        </button>
+                    </div>
+                    <div class="file-list" id="fileList"></div>
+                </div>
+
+                <!-- Browser Control Panel -->
+                <div class="browser-panel" id="browserPanel" style="display: none;">
+                    <div class="browser-controls">
+                        <h3><i class="fas fa-globe"></i> Browser Control</h3>
+                        <div class="control-group">
+                            <input type="url" id="urlInput" placeholder="Enter URL...">
+                            <button id="navigateBtn" class="control-btn">
+                                <i class="fas fa-arrow-right"></i> Navigate
+                            </button>
+                        </div>
+                        <div class="control-group">
+                            <button id="screenshotBtn" class="control-btn">
+                                <i class="fas fa-camera"></i> Screenshot
+                            </button>
+                            <button id="scrollDownBtn" class="control-btn">
+                                <i class="fas fa-arrow-down"></i> Scroll Down
+                            </button>
+                            <button id="scrollUpBtn" class="control-btn">
+                                <i class="fas fa-arrow-up"></i> Scroll Up
+                            </button>
+                        </div>
+                    </div>
+                    <div class="browser-output" id="browserOutput">
+                        <p>Browser commands will appear here...</p>
+                    </div>
+                </div>
+
+                <!-- System Status Panel -->
+                <div class="status-panel" id="statusPanel" style="display: none;">
+                    <h3><i class="fas fa-heartbeat"></i> System Status</h3>
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <h4>AI Engine</h4>
+                            <div class="status-value" id="aiStatus">Checking...</div>
+                        </div>
+                        <div class="status-card">
+                            <h4>Browser</h4>
+                            <div class="status-value" id="browserStatus">Checking...</div>
+                        </div>
+                        <div class="status-card">
+                            <h4>System</h4>
+                            <div class="status-value" id="systemStatus">Checking...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Modal -->
+    <div class="modal" id="securityModal" style="display: none;">
+        <div class="modal-content">
+            <h3>Security Confirmation</h3>
+            <p>Enter the 4-digit security code to proceed with file operations:</p>
+            <input type="text" id="securityCode" maxlength="4" placeholder="0000">
+            <div class="modal-buttons">
+                <button id="confirmSecurity" class="btn-primary">Confirm</button>
+                <button id="cancelSecurity" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
+

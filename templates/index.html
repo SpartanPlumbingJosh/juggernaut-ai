@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juggernaut AI - Monster UI</title>
+    <link rel="stylesheet" href="/static/app.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">J</span>
+                    <span class="logo-text">UGGERNAUT</span>
+                </div>
+                <div class="subtitle">MONSTER UI</div>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator" id="status-indicator">
+                    <div class="status-dot"></div>
+                    <span class="status-text">Initializing...</span>
+                </div>
+                <div class="gpu-badge">
+                    <span class="gpu-icon">⚡</span>
+                    <span class="gpu-text">RTX 4070 SUPER</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="nav-section">
+                    <div class="nav-title">TASKS</div>
+                    <div class="nav-items">
+                        <div class="nav-item active" data-tab="chat">
+                            <span class="nav-icon">💬</span>
+                            <span class="nav-label">Chat</span>
+                            <div class="nav-indicator"></div>
+                        </div>
+                        <div class="nav-item" data-tab="browser">
+                            <span class="nav-icon">🌐</span>
+                            <span class="nav-label">Browser</span>
+                            <div class="nav-indicator"></div>
+                        </div>
+                        <div class="nav-item" data-tab="files">
+                            <span class="nav-icon">📁</span>
+                            <span class="nav-label">Files</span>
+                            <div class="nav-indicator"></div>
+                        </div>
+                        <div class="nav-item" data-tab="research">
+                            <span class="nav-icon">🔬</span>
+                            <span class="nav-label">Research</span>
+                            <div class="nav-indicator"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">SYSTEM</div>
+                    <div class="nav-items">
+                        <div class="nav-item" data-tab="plugins">
+                            <span class="nav-icon">🔌</span>
+                            <span class="nav-label">Plugins</span>
+                            <div class="nav-indicator"></div>
+                        </div>
+                        <div class="nav-item" data-tab="settings">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-label">Settings</span>
+                            <div class="nav-indicator"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Stats -->
+                <div class="system-stats">
+                    <div class="stats-title">SYSTEM STATUS</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">GPU:</span>
+                            <span class="stat-value" id="gpu-status">Ready</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">VRAM:</span>
+                            <span class="stat-value">12GB</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Model:</span>
+                            <span class="stat-value" id="model-status">Demo</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Chats:</span>
+                            <span class="stat-value" id="chat-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <main class="content">
+                <!-- Chat Tab -->
+                <div class="tab-content active" id="chat-tab">
+                    <div class="chat-container">
+                        <!-- Chat Header -->
+                        <div class="chat-header">
+                            <div class="chat-title">
+                                <h2>AI Assistant</h2>
+                                <span class="chat-subtitle">Powered by RTX 4070 SUPER GPU Acceleration</span>
+                            </div>
+                            <div class="chat-actions">
+                                <button class="btn btn-secondary" id="new-chat-btn">
+                                    <span class="btn-icon">➕</span>
+                                    New Chat
+                                </button>
+                                <button class="btn btn-secondary" id="clear-chat-btn">
+                                    <span class="btn-icon">🗑️</span>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages -->
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="welcome-message">
+                                <div class="welcome-icon">🤖</div>
+                                <h3>Welcome to Juggernaut AI</h3>
+                                <p>Your RTX 4070 SUPER is ready for GPU-accelerated AI responses. Start a conversation below!</p>
+                                <div class="welcome-features">
+                                    <div class="feature-item">⚡ GPU Acceleration</div>
+                                    <div class="feature-item">🧠 Advanced AI Models</div>
+                                    <div class="feature-item">💬 Natural Conversations</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input -->
+                        <div class="chat-input-container">
+                            <div class="input-wrapper">
+                                <button class="attachment-btn" id="attachment-btn" title="Upload File">
+                                    <span class="attachment-icon">📎</span>
+                                </button>
+                                <textarea 
+                                    id="message-input" 
+                                    class="message-input" 
+                                    placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
+                                    rows="1"
+                                ></textarea>
+                                <button class="send-btn" id="send-btn" title="Send Message">
+                                    <span class="send-icon">➤</span>
+                                </button>
+                            </div>
+                            <div class="input-footer">
+                                <span class="input-hint">AI responses powered by RTX 4070 SUPER GPU acceleration</span>
+                                <div class="input-stats">
+                                    <span id="response-time">0ms</span>
+                                    <span class="separator">•</span>
+                                    <span id="token-count">0 tokens</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Browser Tab -->
+                <div class="tab-content" id="browser-tab">
+                    <div class="browser-container">
+                        <div class="browser-header">
+                            <h2>Browser Control</h2>
+                            <div class="browser-actions">
+                                <input type="url" id="url-input" placeholder="Enter URL..." class="url-input">
+                                <button class="btn btn-primary" id="navigate-btn">
+                                    <span class="btn-icon">🌐</span>
+                                    Navigate
+                                </button>
+                            </div>
+                        </div>
+                        <div class="browser-content">
+                            <div class="browser-placeholder">
+                                <div class="browser-icon">🌐</div>
+                                <h3>AI-Powered Browser Control</h3>
+                                <p>Enter a URL above to start browsing with AI assistance</p>
+                                <div class="browser-features">
+                                    <div class="feature-item">🤖 AI Navigation</div>
+                                    <div class="feature-item">📊 Content Analysis</div>
+                                    <div class="feature-item">⚡ Smart Automation</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Files Tab -->
+                <div class="tab-content" id="files-tab">
+                    <div class="files-container">
+                        <div class="files-header">
+                            <h2>File Management</h2>
+                            <div class="files-actions">
+                                <input type="file" id="file-input" multiple style="display: none;">
+                                <button class="btn btn-primary" id="upload-btn">
+                                    <span class="btn-icon">📁</span>
+                                    Upload Files
+                                </button>
+                            </div>
+                        </div>
+                        <div class="files-content">
+                            <div class="files-grid" id="files-grid">
+                                <div class="files-placeholder">
+                                    <div class="files-icon">📁</div>
+                                    <h3>AI-Powered File Processing</h3>
+                                    <p>Upload files to get started with AI-powered analysis and processing</p>
+                                    <div class="files-features">
+                                        <div class="feature-item">📄 Document Analysis</div>
+                                        <div class="feature-item">🖼️ Image Processing</div>
+                                        <div class="feature-item">🔍 Content Extraction</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Tab -->
+                <div class="tab-content" id="research-tab">
+                    <div class="research-container">
+                        <div class="research-header">
+                            <h2>AI Research Assistant</h2>
+                            <div class="research-actions">
+                                <select id="analysis-type" class="analysis-select">
+                                    <option value="general">General Analysis</option>
+                                    <option value="technical">Technical Analysis</option>
+                                    <option value="business">Business Analysis</option>
+                                    <option value="academic">Academic Analysis</option>
+                                </select>
+                                <button class="btn btn-primary" id="analyze-btn">
+                                    <span class="btn-icon">🔬</span>
+                                    Analyze
+                                </button>
+                            </div>
+                        </div>
+                        <div class="research-content">
+                            <div class="research-input">
+                                <textarea 
+                                    id="research-input" 
+                                    placeholder="Paste your content here for AI analysis..."
+                                    class="research-textarea"
+                                ></textarea>
+                            </div>
+                            <div class="research-output" id="research-output">
+                                <div class="research-placeholder">
+                                    <div class="research-icon">🔬</div>
+                                    <h3>AI Research Assistant</h3>
+                                    <p>Paste content above and select analysis type to get AI-powered insights</p>
+                                    <div class="research-features">
+                                        <div class="feature-item">📊 Data Analysis</div>
+                                        <div class="feature-item">🎯 Key Insights</div>
+                                        <div class="feature-item">📈 Trend Analysis</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plugins Tab -->
+                <div class="tab-content" id="plugins-tab">
+                    <div class="plugins-container">
+                        <div class="plugins-header">
+                            <h2>Plugin System</h2>
+                            <div class="plugins-actions">
+                                <button class="btn btn-secondary" id="refresh-plugins-btn">
+                                    <span class="btn-icon">🔄</span>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="plugins-content">
+                            <div class="plugins-grid" id="plugins-grid">
+                                <div class="plugins-placeholder">
+                                    <div class="plugins-icon">🔌</div>
+                                    <h3>Extensible Plugin System</h3>
+                                    <p>Modular plugin architecture for custom functionality and integrations</p>
+                                    <div class="plugins-features">
+                                        <div class="feature-item">🔧 Custom Tools</div>
+                                        <div class="feature-item">🌐 API Integrations</div>
+                                        <div class="feature-item">⚡ Performance Boost</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings-tab">
+                    <div class="settings-container">
+                        <div class="settings-header">
+                            <h2>System Settings</h2>
+                        </div>
+                        <div class="settings-content">
+                            <div class="settings-section">
+                                <h3>AI Configuration</h3>
+                                <div class="settings-grid">
+                                    <div class="setting-item">
+                                        <label for="max-tokens">Max Response Tokens:</label>
+                                        <input type="number" id="max-tokens" value="150" min="50" max="2048" class="setting-input">
+                                    </div>
+                                    <div class="setting-item">
+                                        <label for="temperature">Temperature:</label>
+                                        <div class="slider-container">
+                                            <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" class="setting-slider">
+                                            <span id="temperature-value" class="slider-value">0.7</span>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label for="context-length">Context Length:</label>
+                                        <select id="context-length" class="setting-select">
+                                            <option value="2048">2048 tokens</option>
+                                            <option value="4096" selected>4096 tokens</option>
+                                            <option value="8192">8192 tokens</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h3>GPU Configuration</h3>
+                                <div class="settings-grid">
+                                    <div class="setting-item">
+                                        <label for="gpu-enabled">GPU Acceleration:</label>
+                                        <div class="toggle-container">
+                                            <input type="checkbox" id="gpu-enabled" checked class="setting-toggle">
+                                            <label for="gpu-enabled" class="toggle-label">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-text">RTX 4070 SUPER Enabled</span>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label for="gpu-layers">GPU Layers:</label>
+                                        <input type="number" id="gpu-layers" value="35" min="0" max="50" class="setting-input">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h3>System Information</h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">Data Path:</span>
+                                        <span class="info-value" id="data-path">D:\JUGGERNAUT_DATA</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Version:</span>
+                                        <span class="info-value">1.0.0</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">GPU Model:</span>
+                                        <span class="info-value">RTX 4070 SUPER</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">VRAM:</span>
+                                        <span class="info-value">12GB</span>
+                                    </div>
+                                </div>
+                                <div class="settings-actions">
+                                    <button class="btn btn-secondary" id="export-settings-btn">
+                                        <span class="btn-icon">💾</span>
+                                        Export Settings
+                                    </button>
+                                    <button class="btn btn-secondary" id="reset-settings-btn">
+                                        <span class="btn-icon">🔄</span>
+                                        Reset to Default
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Processing with RTX 4070 SUPER...</div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="hidden-file-input" multiple style="display: none;">
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
+

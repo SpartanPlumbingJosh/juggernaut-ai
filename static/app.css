@@ -46,3 +46,46 @@
 }
 
 /* Additional styles here */
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message.user {
+    background: #2d4a87;
+    margin-left: 20%;
+}
+
+.message.assistant {
+    background: #1a4d3a;
+    margin-right: 20%;
+}
+
+.message.error {
+    background: #4d1a1a;
+    color: #ff6b6b;
+}
+
+.message-content p {
+    margin: 5px 0 0 0;
+    white-space: pre-wrap;
+}
+
+.chat-area {
+    scrollbar-width: thin;
+    scrollbar-color: #666 #1a1a1a;
+}
+
+.chat-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-area::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.chat-area::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 4px;
+}

@@ -4,12 +4,13 @@
     // Initialize new chat on page load
     initializeNewChat();
     
-    // Send message functionality
-    var messageInput = document.querySelector('input[type="text"]');
-    var sendButton = document.querySelector('button');
+    // Send message functionality with correct selectors
+    var messageInput = document.getElementById('message-input');
+    var sendButton = document.getElementById('send-btn');
     
     if (sendButton) {
         sendButton.addEventListener('click', sendMessage);
+        console.log('Send button connected');
     }
     
     if (messageInput) {
@@ -18,6 +19,7 @@
                 sendMessage();
             }
         });
+        console.log('Input field connected');
     }
     
     function initializeNewChat() {
@@ -37,10 +39,21 @@
     }
     
     function sendMessage() {
-        var input = document.querySelector('input[type="text"]');
+        console.log('Send message function called');
+        var input = document.getElementById('message-input');
         var message = input.value.trim();
         
-        if (!message || !currentChatId) return;
+        if (!message) {
+            console.log('No message to send');
+            return;
+        }
+        
+        if (!currentChatId) {
+            console.log('No chat ID available');
+            return;
+        }
+        
+        console.log('Sending message:', message);
         
         // Clear input
         input.value = '';
@@ -53,8 +66,12 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({message: message})
         })
-        .then(function(response) { return response.json(); })
+        .then(function(response) { 
+            console.log('Response received:', response.status);
+            return response.json(); 
+        })
         .then(function(data) {
+            console.log('Response data:', data);
             // Add AI response to chat
             addMessageToChat('assistant', data.response);
         })
@@ -82,12 +99,15 @@
     function createChatArea() {
         var chatArea = document.createElement('div');
         chatArea.className = 'chat-area';
-        chatArea.style.cssText = 'height: 400px; overflow-y: auto; padding: 20px; margin-bottom: 20px; border: 1px solid #333; background: #1a1a1a; color: white;';
+        chatArea.style.cssText = 'height: 400px; overflow-y: auto; padding: 20px; margin-bottom: 20px; border: 1px solid #333; background: #1a1a1a; color: white; border-radius: 5px;';
         
-        var container = document.querySelector('.container') || document.body;
-        var inputContainer = document.querySelector('.input-container') || document.querySelector('input').parentElement;
+        var mainContent = document.querySelector('.main-content');
+        var inputContainer = document.querySelector('.input-container');
         
-        container.insertBefore(chatArea, inputContainer);
+        mainContent.insertBefore(chatArea, inputContainer);
         return chatArea;
     }
+    
+    // Make sendMessage globally available for debugging
+    window.sendMessage = sendMessage;
 });

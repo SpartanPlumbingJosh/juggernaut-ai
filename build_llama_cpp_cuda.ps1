@@ -1,5 +1,5 @@
 # Build llama-cpp-python from Source with CUDA Support for RTX 4070 SUPER
-# Based on comprehensive research and root cause analysis
+# PowerShell Compatible Version (No Unicode Characters)
 # Author: Manus AI
 # Date: June 27, 2025
 
@@ -27,7 +27,7 @@ if (-not $cudaPath -or -not (Test-Path $cudaPath)) {
     Write-Host "Please ensure CUDA Toolkit 12.4 is properly installed." -ForegroundColor Red
     exit 1
 }
-Write-Host "✓ CUDA found at: $cudaPath" -ForegroundColor Green
+Write-Host "SUCCESS: CUDA found at: $cudaPath" -ForegroundColor Green
 
 # Check Visual Studio Community
 $vsPath = "C:\Program Files\Microsoft Visual Studio\2022\Community"
@@ -36,7 +36,7 @@ if (-not (Test-Path $vsPath)) {
     Write-Host "Please install Visual Studio 2022 Community with C++ workload." -ForegroundColor Red
     exit 1
 }
-Write-Host "✓ Visual Studio 2022 Community found" -ForegroundColor Green
+Write-Host "SUCCESS: Visual Studio 2022 Community found" -ForegroundColor Green
 
 # Check CUDA integration in Visual Studio
 $cudaPropsPath = "$vsPath\MSBuild\Microsoft\VC\v170\BuildCustomizations\CUDA 12.4.props"
@@ -45,13 +45,14 @@ if (-not (Test-Path $cudaPropsPath)) {
     Write-Host "Expected: $cudaPropsPath" -ForegroundColor Red
     exit 1
 }
-Write-Host "✓ CUDA integration found in Visual Studio" -ForegroundColor Green
+Write-Host "SUCCESS: CUDA integration found in Visual Studio" -ForegroundColor Green
 
 # Check Python
 try {
     $pythonVersion = python --version 2>&1
-    Write-Host "✓ Python found: $pythonVersion" -ForegroundColor Green
-} catch {
+    Write-Host "SUCCESS: Python found: $pythonVersion" -ForegroundColor Green
+}
+catch {
     Write-Host "ERROR: Python not found in PATH" -ForegroundColor Red
     exit 1
 }
@@ -86,7 +87,7 @@ $env:CMAKE_GENERATOR_PLATFORM = "x64"
 # NVCC Configuration (Critical for dependency resolution)
 $env:CUDACXX = "$cudaPath\bin\nvcc.exe"
 
-Write-Host "✓ Environment variables configured:" -ForegroundColor Green
+Write-Host "SUCCESS: Environment variables configured:" -ForegroundColor Green
 Write-Host "  CUDA_HOME: $env:CUDA_HOME" -ForegroundColor Gray
 Write-Host "  CMAKE_ARGS: $env:CMAKE_ARGS" -ForegroundColor Gray
 Write-Host "  CUDACXX: $env:CUDACXX" -ForegroundColor Gray
@@ -116,7 +117,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Set-Location "llama-cpp-python"
-Write-Host "✓ Repository cloned successfully" -ForegroundColor Green
+Write-Host "SUCCESS: Repository cloned successfully" -ForegroundColor Green
 
 # Step 6: Install Build Dependencies
 Write-Host ""
@@ -127,7 +128,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "ERROR: Failed to install build dependencies" -ForegroundColor Red
     exit 1
 }
-Write-Host "✓ Build dependencies installed" -ForegroundColor Green
+Write-Host "SUCCESS: Build dependencies installed" -ForegroundColor Green
 
 # Step 7: Build and Install
 Write-Host ""
@@ -156,11 +157,13 @@ if ($buildResult -eq 0) {
     Write-Host "Step 8: Verifying Installation..." -ForegroundColor Cyan
     
     Write-Host "Testing import..." -ForegroundColor Yellow
-    $testResult = python -c "
+    $testScript = @"
 import llama_cpp
-print('✓ llama-cpp-python imported successfully')
-print('✓ CUDA support available:', llama_cpp.llama_supports_gpu_offload())
-" 2>&1
+print('SUCCESS: llama-cpp-python imported successfully')
+print('SUCCESS: CUDA support available:', llama_cpp.llama_supports_gpu_offload())
+"@
+    
+    $testResult = python -c $testScript 2>&1
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host $testResult -ForegroundColor Green
@@ -169,7 +172,7 @@ print('✓ CUDA support available:', llama_cpp.llama_supports_gpu_offload())
         Write-Host ""
         Write-Host "Next steps:" -ForegroundColor Cyan
         Write-Host "1. Navigate to your Juggernaut AI directory: cd D:\JuggernautAI" -ForegroundColor White
-        Write-Host "2. Start your system: python juggernaut_real_ultimate.py" -ForegroundColor White
+        Write-Host "2. Start your system: python juggernaut_final_working.py" -ForegroundColor White
         Write-Host "3. Monitor GPU usage in Task Manager to verify acceleration" -ForegroundColor White
     } else {
         Write-Host "WARNING: Build succeeded but import test failed:" -ForegroundColor Yellow

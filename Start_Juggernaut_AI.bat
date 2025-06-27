@@ -1,5 +1,5 @@
 @echo off
-REM Juggernaut AI - Taskbar Launcher
+REM Juggernaut AI - Taskbar Launcher (FIXED VERSION)
 REM Pin this file to your taskbar for one-click startup
 
 title Juggernaut AI - Starting...
@@ -35,7 +35,7 @@ echo Press Ctrl+C to stop the system
 echo ========================================
 echo.
 
-REM Start the real Juggernaut AI system
+REM Start the FIXED Juggernaut AI system with correct model path
 python juggernaut_real_fixed.py
 
 REM If the system stops, show a message

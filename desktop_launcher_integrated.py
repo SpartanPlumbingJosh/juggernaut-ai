@@ -2,6 +2,7 @@
 """
 Juggernaut AI - Desktop Launcher
 Professional desktop application launcher with GUI
+Windows PowerShell compatible - no Unicode characters
 """
 
 import tkinter as tk
@@ -76,7 +77,7 @@ class JuggernautLauncher:
         
         # Title
         title_label = ttk.Label(main_frame, 
-                               text="🤖 JUGGERNAUT AI", 
+                               text="JUGGERNAUT AI", 
                                style='Title.TLabel')
         title_label.pack(pady=(0, 5))
         
@@ -90,7 +91,7 @@ class JuggernautLauncher:
         status_frame.pack(fill=tk.X, pady=(0, 20))
         
         self.status_label = ttk.Label(status_frame, 
-                                     text="🔴 Stopped", 
+                                     text="Stopped", 
                                      style='Status.TLabel')
         self.status_label.pack()
         
@@ -100,21 +101,21 @@ class JuggernautLauncher:
         
         # Start button
         self.start_button = ttk.Button(control_frame, 
-                                      text="🚀 Start Juggernaut AI",
+                                      text="Start Juggernaut AI",
                                       command=self.start_system,
                                       style='Red.TButton')
         self.start_button.pack(side=tk.LEFT, padx=(0, 10))
         
         # Stop button
         self.stop_button = ttk.Button(control_frame, 
-                                     text="⏹️ Stop System",
+                                     text="Stop System",
                                      command=self.stop_system,
                                      state=tk.DISABLED)
         self.stop_button.pack(side=tk.LEFT, padx=(0, 10))
         
         # Open browser button
         self.browser_button = ttk.Button(control_frame, 
-                                        text="🌐 Open Interface",
+                                        text="Open Interface",
                                         command=self.open_browser,
                                         state=tk.DISABLED)
         self.browser_button.pack(side=tk.LEFT)
@@ -158,9 +159,9 @@ class JuggernautLauncher:
         self.log_text.pack(fill=tk.BOTH, expand=True)
         
         # Add initial log message
-        self.log("🎯 Juggernaut AI Desktop Launcher Ready")
-        self.log("📍 Interface will be available at: http://localhost:5000")
-        self.log("🔧 Configure paths above and click 'Start Juggernaut AI'")
+        self.log("Juggernaut AI Desktop Launcher Ready")
+        self.log("Interface will be available at: http://localhost:5000")
+        self.log("Configure paths above and click 'Start Juggernaut AI'")
     
     def log(self, message):
         """Add message to log"""
@@ -178,11 +179,11 @@ class JuggernautLauncher:
             response = requests.get(self.server_url, timeout=2)
             if response.status_code == 200:
                 self.is_running = True
-                self.update_status("🟢 Running", "green")
+                self.update_status("Running", "green")
                 self.start_button.configure(state=tk.DISABLED)
                 self.stop_button.configure(state=tk.NORMAL)
                 self.browser_button.configure(state=tk.NORMAL)
-                self.log("✅ Detected running Juggernaut AI system")
+                self.log("Detected running Juggernaut AI system")
         except:
             pass
     
@@ -192,13 +193,13 @@ class JuggernautLauncher:
             messagebox.showwarning("Warning", "System is already running!")
             return
         
-        self.log("🚀 Starting Juggernaut AI System...")
+        self.log("Starting Juggernaut AI System...")
         
         # Disable start button
         self.start_button.configure(state=tk.DISABLED)
         
         # Update status
-        self.update_status("🟡 Starting...", "orange")
+        self.update_status("Starting...", "orange")
         
         # Start in separate thread
         threading.Thread(target=self._start_system_thread, daemon=True).start()
@@ -224,13 +225,13 @@ class JuggernautLauncher:
                     break
             
             if not system_file:
-                self.log("❌ ERROR: No Juggernaut AI system file found!")
-                self.log("📁 Please ensure juggernaut_integrated.py is in the same directory")
+                self.log("ERROR: No Juggernaut AI system file found!")
+                self.log("Please ensure juggernaut_integrated.py is in the same directory")
                 self.start_button.configure(state=tk.NORMAL)
-                self.update_status("🔴 Error", "red")
+                self.update_status("Error", "red")
                 return
             
-            self.log(f"📂 Using system file: {os.path.basename(system_file)}")
+            self.log(f"Using system file: {os.path.basename(system_file)}")
             
             # Set environment variables
             env = os.environ.copy()
@@ -248,15 +249,15 @@ class JuggernautLauncher:
                 cwd=current_dir
             )
             
-            self.log("⚡ System process started")
+            self.log("System process started")
             
             # Wait for system to be ready
             self.wait_for_system_ready()
             
         except Exception as e:
-            self.log(f"❌ ERROR: Failed to start system: {e}")
+            self.log(f"ERROR: Failed to start system: {e}")
             self.start_button.configure(state=tk.NORMAL)
-            self.update_status("🔴 Error", "red")
+            self.update_status("Error", "red")
     
     def wait_for_system_ready(self):
         """Wait for system to be ready"""
@@ -269,11 +270,11 @@ class JuggernautLauncher:
                 response = requests.get(self.server_url, timeout=2)
                 if response.status_code == 200:
                     self.is_running = True
-                    self.update_status("🟢 Running", "green")
+                    self.update_status("Running", "green")
                     self.stop_button.configure(state=tk.NORMAL)
                     self.browser_button.configure(state=tk.NORMAL)
-                    self.log("✅ Juggernaut AI System Ready!")
-                    self.log(f"🌐 Interface available at: {self.server_url}")
+                    self.log("Juggernaut AI System Ready!")
+                    self.log(f"Interface available at: {self.server_url}")
                     
                     # Auto-open browser
                     self.root.after(2000, self.open_browser)
@@ -284,11 +285,11 @@ class JuggernautLauncher:
             
             attempt += 1
             time.sleep(1)
-            self.log(f"⏳ Waiting for system... ({attempt}/{max_attempts})")
+            self.log(f"Waiting for system... ({attempt}/{max_attempts})")
         
-        self.log("❌ ERROR: System failed to start within timeout")
+        self.log("ERROR: System failed to start within timeout")
         self.start_button.configure(state=tk.NORMAL)
-        self.update_status("🔴 Timeout", "red")
+        self.update_status("Timeout", "red")
     
     def stop_system(self):
         """Stop the Juggernaut AI system"""
@@ -296,27 +297,27 @@ class JuggernautLauncher:
             messagebox.showwarning("Warning", "System is not running!")
             return
         
-        self.log("⏹️ Stopping Juggernaut AI System...")
+        self.log("Stopping Juggernaut AI System...")
         
         try:
             if self.process:
                 self.process.terminate()
                 self.process.wait(timeout=10)
-                self.log("✅ System stopped successfully")
+                self.log("System stopped successfully")
             else:
-                self.log("⚠️ No process handle, system may have been started externally")
+                self.log("No process handle, system may have been started externally")
                 
         except subprocess.TimeoutExpired:
-            self.log("⚠️ Force killing system process...")
+            self.log("Force killing system process...")
             self.process.kill()
-            self.log("✅ System force stopped")
+            self.log("System force stopped")
         except Exception as e:
-            self.log(f"❌ ERROR: Failed to stop system: {e}")
+            self.log(f"ERROR: Failed to stop system: {e}")
         
         # Reset state
         self.is_running = False
         self.process = None
-        self.update_status("🔴 Stopped", "red")
+        self.update_status("Stopped", "red")
         self.start_button.configure(state=tk.NORMAL)
         self.stop_button.configure(state=tk.DISABLED)
         self.browser_button.configure(state=tk.DISABLED)
@@ -327,7 +328,7 @@ class JuggernautLauncher:
             messagebox.showwarning("Warning", "System is not running!")
             return
         
-        self.log(f"🌐 Opening browser: {self.server_url}")
+        self.log(f"Opening browser: {self.server_url}")
         webbrowser.open(self.server_url)
     
     def update_status(self, text, color):

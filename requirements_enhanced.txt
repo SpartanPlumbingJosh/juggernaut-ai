@@ -1,0 +1,41 @@
+# JUGGERNAUT AI - Enhanced System Requirements
+# System Access Capabilities for Gemma 3 AI
+
+# Core Flask and Web Framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# HTTP Requests for Ollama API
+requests==2.31.0
+
+# System Information and Monitoring
+psutil==5.9.5
+WMI==1.5.1
+
+# Windows Registry Access (Windows only)
+# Note: winreg is built into Python on Windows
+
+# File and Path Operations
+pathlib2==2.3.7
+
+# JSON and Data Handling
+# Note: json is built into Python
+
+# Date and Time Handling
+# Note: datetime is built into Python
+
+# Logging and Error Handling
+# Note: logging and traceback are built into Python
+
+# Threading and Subprocess
+# Note: threading and subprocess are built into Python
+
+# Additional Utilities
+mimetypes2==0.1.1
+
+# Security and Hashing
+# Note: hashlib is built into Python
+
+# Platform Information
+# Note: platform is built into Python
+

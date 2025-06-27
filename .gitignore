@@ -22,9 +22,12 @@ wheels/
 
 # Data directories
 data/
-logs/
 temp/
 *.log
+
+# Allow logs directory but ignore log files
+logs/*.log
+!logs/README.md
 
 # Environment
 .env

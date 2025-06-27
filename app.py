@@ -22,6 +22,10 @@ from free_communication_manager import FreeCommunicationManager
 from hot_reload_system import HotReloadManager
 
 # Configure logging
+# Configure logging with auto-directory creation
+import os
+os.makedirs('logs', exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

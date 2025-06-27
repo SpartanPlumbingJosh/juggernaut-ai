@@ -276,10 +276,20 @@ def chat():
         # Generate response
         result = juggernaut.generate_response(message, chat_type)
         
+        if result['error']:
+            return jsonify({
+                'success': False,
+                'error': result['response']
+            }), 500
+        
         return jsonify({
+            'success': True,
             'response': result['response'],
-            'timestamp': datetime.now().isoformat(),
-            'model_status': juggernaut.system_metrics['status']
+            'metadata': {
+                'timestamp': datetime.now().isoformat(),
+                'model_status': juggernaut.system_metrics['status'],
+                'response_time': 2000  # Placeholder for response time
+            }
         })
         
     except Exception as e:

@@ -92,7 +92,7 @@ class JuggernautAI:
         try:
             logger.info("Initializing REAL Juggernaut AI System with Ollama...")
             logger.info("NO DEMO MODE - REAL AI RESPONSES ONLY")
-            logger.info("Model: Gemma 3 (9B parameters) via Ollama")
+            logger.info("Model: Gemma 3 (12B parameters) via Ollama")
             
             # Check if Ollama service is running
             if not self.check_ollama_service():
@@ -286,6 +286,18 @@ def chat():
         logger.error(f"Chat API error: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/system/metrics')
+def system_metrics():
+    """Get system metrics for the UI"""
+    return jsonify({
+        'gpu_name': juggernaut.system_metrics['gpu_name'],
+        'vram': juggernaut.system_metrics['vram'],
+        'model_name': juggernaut.system_metrics['model_name'],
+        'status': juggernaut.system_metrics['status'],
+        'ollama_ready': juggernaut.ollama_ready,
+        'conversation_count': len(juggernaut.conversation_history)
+    })
+
 @app.route('/api/system/status')
 def system_status():
     """Get system status"""
@@ -312,7 +324,7 @@ if __name__ == '__main__':
     print("========================================")
     print("")
     print("RTX 4070 SUPER AI System")
-    print("Real Gemma 3 (9B) via Ollama")
+    print("Real Gemma 3 (12B) via Ollama")
     print("Professional Monster UI")
     print("GPU Acceleration: Automatic")
     print("CPU Fallback: Automatic")

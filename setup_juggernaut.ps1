@@ -8,7 +8,7 @@ Write-Host "   JUGGERNAUT AI - COMPLETE SETUP" -ForegroundColor Red
 Write-Host "========================================" -ForegroundColor Red
 Write-Host ""
 Write-Host "RTX 4070 SUPER Optimized System" -ForegroundColor White
-Write-Host "Real Gemma 3 AI via Ollama" -ForegroundColor White
+Write-Host "Real Gemma 3 12B AI via Ollama" -ForegroundColor White
 Write-Host "No DLL Dependencies" -ForegroundColor White
 Write-Host "One-Click Desktop Launch" -ForegroundColor White
 Write-Host ""

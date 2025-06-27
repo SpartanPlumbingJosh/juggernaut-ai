@@ -87,13 +87,13 @@ if ($modelList -match "gemma") {
 
 # Step 4: Install Gemma model if not present
 if (-not $modelInstalled) {
-    Write-Host "Step 4: Installing Gemma 3 model (9B parameters)..." -ForegroundColor Cyan
-    Write-Host "This will download approximately 5.5GB. Please be patient..." -ForegroundColor Yellow
+    Write-Host "Step 4: Installing Gemma 3 model (12B parameters)..." -ForegroundColor Cyan
+    Write-Host "This will download approximately 8.1GB. Please be patient..." -ForegroundColor Yellow
     
     $modelStartTime = Get-Date
     
-    # Pull the 9B model (equivalent to user's Q6_K model)
-    ollama pull gemma3:9b
+    # Pull the 12B model (optimized for RTX 4070 SUPER)
+    ollama pull gemma3:12b
     
     if ($LASTEXITCODE -eq 0) {
         $modelEndTime = Get-Date
@@ -120,7 +120,7 @@ Start-Sleep -Seconds 3
 
 # Test the API
 try {
-    $testResponse = Invoke-RestMethod -Uri "http://localhost:11434/api/generate" -Method Post -Body '{"model":"gemma3:9b","prompt":"Hello","stream":false}' -ContentType "application/json" -TimeoutSec 30
+    $testResponse = Invoke-RestMethod -Uri "http://localhost:11434/api/generate" -Method Post -Body '{"model":"gemma3:12b","prompt":"Hello","stream":false}' -ContentType "application/json" -TimeoutSec 30
     
     if ($testResponse.response) {
         Write-Host "SUCCESS: Ollama API is working" -ForegroundColor Green
@@ -141,7 +141,7 @@ Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "INSTALLATION SUMMARY:" -ForegroundColor Cyan
 Write-Host "- Ollama: Installed and running" -ForegroundColor White
-Write-Host "- Gemma 3 Model: 9B parameters (equivalent to your Q6_K model)" -ForegroundColor White
+Write-Host "- Gemma 3 Model: 12B parameters (optimized for RTX 4070 SUPER)" -ForegroundColor White
 Write-Host "- API Endpoint: http://localhost:11434" -ForegroundColor White
 Write-Host "- GPU Acceleration: Automatic (when available)" -ForegroundColor White
 Write-Host "- CPU Fallback: Automatic" -ForegroundColor White

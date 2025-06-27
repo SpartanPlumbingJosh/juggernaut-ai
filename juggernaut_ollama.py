@@ -35,13 +35,13 @@ logger = logging.getLogger(__name__)
 class JuggernautAI:
     def __init__(self):
         self.ollama_url = "http://localhost:11434"
-        self.model_name = "gemma3:9b"
+        self.model_name = "gemma3:12b"
         self.ollama_ready = False
         self.conversation_history = []
         self.system_metrics = {
             'gpu_name': 'RTX 4070 SUPER',
             'vram': '12GB',
-            'model_name': 'Gemma 3 (9B)',
+            'model_name': 'Gemma 3 (12B)',
             'status': 'Initializing'
         }
         

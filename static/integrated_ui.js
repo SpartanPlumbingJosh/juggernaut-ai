@@ -7,6 +7,8 @@ class JuggernautAI {
         this.chatHistory = {};
         this.isLoading = false;
         this.systemMetrics = {};
+        this.currentRequest = null;
+        this.processingCount = 0;
         
         this.init();
     }
@@ -145,7 +147,7 @@ class JuggernautAI {
         const chatInput = document.getElementById('chat-input');
         const message = predefinedMessage || chatInput.value.trim();
         
-        if (!message || this.isLoading) return;
+        if (!message) return;
         
         console.log(`💬 Sending message: ${message.substring(0, 50)}...`);
         
@@ -158,14 +160,21 @@ class JuggernautAI {
         // Add user message to chat
         this.addMessageToChat('user', message);
         
-        // Show loading
-        this.setLoading(true);
+        // Create unique request ID
+        const requestId = Date.now() + Math.random();
+        
+        // Show non-blocking processing indicator
+        this.showProcessingIndicator(requestId);
         
         try {
             // Get chat context
             const context = this.getChatContext();
             
-            // Send to API
+            // Create AbortController for cancellation
+            const controller = new AbortController();
+            this.currentRequest = { controller, requestId };
+            
+            // Send to API with abort signal
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
@@ -174,8 +183,10 @@ class JuggernautAI {
                 body: JSON.stringify({
                     message: message,
                     chat_id: this.currentChatId,
-                    context: context
-                })
+                    context: context,
+                    request_id: requestId
+                }),
+                signal: controller.signal
             });
             
             const data = await response.json();
@@ -189,11 +200,18 @@ class JuggernautAI {
             }
             
         } catch (error) {
-            console.error('❌ Chat error:', error);
-            this.addMessageToChat('assistant', 
-                `I encountered an error: ${error.message}. Please try again.`);
+            if (error.name === 'AbortError') {
+                console.log('🛑 Request cancelled by user');
+                this.addMessageToChat('assistant', 
+                    '⚠️ Request cancelled. You can send a new message anytime.');
+            } else {
+                console.error('❌ Chat error:', error);
+                this.addMessageToChat('assistant', 
+                    `I encountered an error: ${error.message}. Please try again.`);
+            }
         } finally {
-            this.setLoading(false);
+            this.hideProcessingIndicator(requestId);
+            this.currentRequest = null;
         }
     }
     
@@ -804,4 +822,165 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+
+    
+    // Processing Indicator Functions (Non-blocking)
+    showProcessingIndicator(requestId) {
+        this.processingCount++;
+        
+        // Create or update processing message
+        let processingMsg = document.getElementById('processing-message');
+        if (!processingMsg) {
+            processingMsg = document.createElement('div');
+            processingMsg.id = 'processing-message';
+            processingMsg.className = 'message assistant processing';
+            processingMsg.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="message-text">
+                        <div class="processing-indicator">
+                            <span class="processing-dots">●●●</span>
+                            <span class="processing-text">Processing your request...</span>
+                            <button class="cancel-btn" onclick="juggernautAI.cancelCurrentRequest()">
+                                ❌ Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages) {
+                chatMessages.appendChild(processingMsg);
+            }
+        }
+        
+        // Animate processing dots
+        this.animateProcessingDots();
+        
+        // Scroll to bottom
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+    
+    hideProcessingIndicator(requestId) {
+        this.processingCount--;
+        
+        if (this.processingCount <= 0) {
+            const processingMsg = document.getElementById('processing-message');
+            if (processingMsg) {
+                processingMsg.remove();
+            }
+            this.processingCount = 0;
+        }
+    }
+    
+    animateProcessingDots() {
+        const dots = document.querySelector('.processing-dots');
+        if (!dots) return;
+        
+        let dotCount = 1;
+        const interval = setInterval(() => {
+            if (!document.querySelector('.processing-dots')) {
+                clearInterval(interval);
+                return;
+            }
+            
+            dots.textContent = '●'.repeat(dotCount) + '○'.repeat(3 - dotCount);
+            dotCount = (dotCount % 3) + 1;
+        }, 500);
+    }
+    
+    cancelCurrentRequest() {
+        if (this.currentRequest) {
+            this.currentRequest.controller.abort();
+            console.log('🛑 Cancelling current request...');
+        }
+    }
+    
+    // Override setLoading to be non-blocking
+    setLoading(loading) {
+        // Keep interface fully responsive - don't disable anything
+        console.log(loading ? '⏳ Processing...' : '✅ Ready');
+    }
+}
+
+
+
+// Add enhanced styles for non-blocking interface
+const enhancedStyles = document.createElement('style');
+enhancedStyles.textContent = `
+/* Processing Indicator Styles */
+.processing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #ff4444;
+}
+
+.processing-dots {
+    font-size: 18px;
+    color: #ff4444;
+    font-weight: bold;
+}
+
+.processing-text {
+    color: #ffffff;
+    font-style: italic;
+}
+
+.cancel-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #ff6666;
+}
+
+.message.processing {
+    opacity: 0.9;
+}
+
+/* Keep send button always enabled */
+#send-btn:disabled {
+    opacity: 1 !important;
+    cursor: pointer !important;
+    background: #ff4444 !important;
+}
+
+/* Hide the blocking overlay */
+#loading-overlay {
+    display: none !important;
+}
+`;
+
+// Inject styles when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        document.head.appendChild(enhancedStyles);
+    });
+} else {
+    document.head.appendChild(enhancedStyles);
+}
+
+// Initialize the enhanced Juggernaut AI
+window.juggernautAI = new JuggernautAI();
+
+console.log('🚀 Enhanced Non-blocking Juggernaut AI Interface Loaded!');
+console.log('✅ You can now send messages while processing');
+console.log('✅ Cancel button available during processing');
+console.log('✅ Interface stays responsive');
 

@@ -21,7 +21,6 @@ from gemma3_engine import Gemma3Engine
 from free_communication_manager import FreeCommunicationManager
 from hot_reload_system import HotReloadManager
 
-# Configure logging
 # Configure logging with auto-directory creation
 import os
 os.makedirs('logs', exist_ok=True)
@@ -49,8 +48,13 @@ class Config:
     UPLOADS_DIR = DATA_DIR / "uploads"
     LOGS_DIR = Path("logs")
     
-    # Gemma 3 Model Configuration
-    GEMMA_MODEL_PATH = "D:/Juggernaut_AI/models/ai_models/text/gemma_2_9b_gguf/gemma-2-9b-it-Q4_K_M.gguf"
+    # Gemma 3 Model Configuration - Multiple possible paths
+    GEMMA_MODEL_PATHS = [
+        "D:/Juggernaut_AI/models/ai_models/text/gemma_2_9b_gguf/gemma-2-9b-it-Q4_K_M.gguf",
+        "D:/JuggernautAI/models/gemma-2-9b-it-Q4_K_M.gguf",
+        "D:/models/gemma-2-9b-it-Q4_K_M.gguf",
+        "./models/gemma-2-9b-it-Q4_K_M.gguf"
+    ]
     GPU_LAYERS = 35  # RTX 4070 SUPER optimized
     CONTEXT_WINDOW = 4096
     
@@ -67,6 +71,14 @@ class Config:
         """Create necessary directories"""
         for directory in [cls.DATA_DIR, cls.MODELS_DIR, cls.CHATS_DIR, cls.UPLOADS_DIR, cls.LOGS_DIR]:
             directory.mkdir(parents=True, exist_ok=True)
+    
+    @classmethod
+    def find_gemma_model(cls):
+        """Find the Gemma model in possible locations"""
+        for path in cls.GEMMA_MODEL_PATHS:
+            if os.path.exists(path):
+                return path
+        return None
 
 # Initialize configuration
 Config.create_directories()
@@ -81,35 +93,43 @@ def initialize_ai_engine():
     """Initialize the Gemma 3 AI engine"""
     global ai_engine
     try:
-        logger.info("🤖 Initializing Gemma 3 AI Engine...")
+        logger.info("INIT: Initializing Gemma 3 AI Engine...")
+        
+        # Find the model
+        model_path = Config.find_gemma_model()
+        if model_path:
+            logger.info(f"FOUND: Gemma model at {model_path}")
+        else:
+            logger.info("INFO: No Gemma model found - running in demo mode")
+        
         ai_engine = Gemma3Engine(
-            model_path=Config.GEMMA_MODEL_PATH,
+            model_path=model_path,
             gpu_layers=Config.GPU_LAYERS,
             context_window=Config.CONTEXT_WINDOW
         )
-        logger.info("✅ AI Engine initialized successfully")
+        logger.info("SUCCESS: AI Engine initialized successfully")
         return True
     except Exception as e:
-        logger.error(f"❌ Failed to initialize AI Engine: {e}")
+        logger.error(f"ERROR: Failed to initialize AI Engine: {e}")
         return False
 
 def initialize_communication_manager():
     """Initialize the communication manager"""
     global communication_manager
     try:
-        logger.info("📡 Initializing Communication Manager...")
+        logger.info("INIT: Initializing Communication Manager...")
         communication_manager = FreeCommunicationManager()
-        logger.info("✅ Communication Manager initialized")
+        logger.info("SUCCESS: Communication Manager initialized")
         return True
     except Exception as e:
-        logger.error(f"❌ Failed to initialize Communication Manager: {e}")
+        logger.error(f"ERROR: Failed to initialize Communication Manager: {e}")
         return False
 
 def initialize_hot_reload():
     """Initialize hot reload system"""
     global hot_reload_manager
     try:
-        logger.info("🔥 Initializing Hot Reload System...")
+        logger.info("INIT: Initializing Hot Reload System...")
         hot_reload_manager = HotReloadManager(
             app=app,
             repo_path=Config.REPO_PATH,
@@ -122,15 +142,15 @@ def initialize_hot_reload():
         # Start hot reload
         hot_reload_manager.start()
         
-        logger.info("✅ Hot Reload System initialized")
+        logger.info("SUCCESS: Hot Reload System initialized")
         return True
     except Exception as e:
-        logger.error(f"❌ Failed to initialize Hot Reload: {e}")
+        logger.error(f"ERROR: Failed to initialize Hot Reload: {e}")
         return False
 
 def on_system_update():
     """Callback for when system updates occur"""
-    logger.info("🔄 System update detected - refreshing components...")
+    logger.info("UPDATE: System update detected - refreshing components...")
     
     # Refresh AI engine if needed
     global ai_engine
@@ -190,6 +210,8 @@ def chat():
         if not message:
             return jsonify({'success': False, 'error': 'Empty message'})
         
+        logger.info(f"CHAT: Processing message in {chat_id}: {message[:50]}...")
+        
         # Generate AI response
         start_time = time.time()
         
@@ -203,6 +225,8 @@ def chat():
         # Save chat message
         save_chat_message(chat_id, message, response)
         
+        logger.info(f"CHAT: Response generated in {response_time:.2f}s")
+        
         return jsonify({
             'success': True,
             'response': response,
@@ -215,7 +239,7 @@ def chat():
         })
         
     except Exception as e:
-        logger.error(f"Chat error: {e}")
+        logger.error(f"CHAT ERROR: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/upload', methods=['POST'])
@@ -236,14 +260,16 @@ def upload_files():
                 file.save(filepath)
                 uploaded_files.append(str(filepath))
         
+        logger.info(f"UPLOAD: {len(uploaded_files)} files uploaded successfully")
+        
         # Analyze files with AI
         if ai_engine and uploaded_files:
-            analysis = f"📁 **Files Uploaded Successfully**\n\nUploaded {len(uploaded_files)} files:\n"
+            analysis = f"FILES UPLOADED SUCCESSFULLY\n\nUploaded {len(uploaded_files)} files:\n"
             for file_path in uploaded_files:
                 file_size = os.path.getsize(file_path)
                 analysis += f"• {Path(file_path).name} ({file_size:,} bytes)\n"
             
-            analysis += "\n🤖 **AI Analysis:**\nFiles are ready for processing. You can ask me to analyze, summarize, or work with these files in our conversation!"
+            analysis += "\nAI ANALYSIS:\nFiles are ready for processing. You can ask me to analyze, summarize, or work with these files in our conversation!"
         else:
             analysis = f"Uploaded {len(uploaded_files)} files successfully."
         
@@ -254,7 +280,7 @@ def upload_files():
         })
         
     except Exception as e:
-        logger.error(f"Upload error: {e}")
+        logger.error(f"UPLOAD ERROR: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/browser/navigate', methods=['POST'])
@@ -264,6 +290,8 @@ def browser_navigate():
         data = request.get_json()
         url = data.get('url', '')
         mode = data.get('mode', 'ai')
+        
+        logger.info(f"BROWSER: Navigating to {url} in {mode} mode")
         
         # Simulate browser navigation
         content = f"""
@@ -284,7 +312,7 @@ def browser_navigate():
         })
         
     except Exception as e:
-        logger.error(f"Browser navigation error: {e}")
+        logger.error(f"BROWSER ERROR: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/system/metrics')
@@ -304,7 +332,7 @@ def system_metrics():
         })
         
     except Exception as e:
-        logger.error(f"System metrics error: {e}")
+        logger.error(f"METRICS ERROR: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/chat/history')
@@ -329,7 +357,7 @@ def chat_history():
         })
         
     except Exception as e:
-        logger.error(f"Chat history error: {e}")
+        logger.error(f"HISTORY ERROR: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/files')
@@ -354,7 +382,7 @@ def list_files():
         })
         
     except Exception as e:
-        logger.error(f"Files list error: {e}")
+        logger.error(f"FILES ERROR: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/communication')
@@ -434,7 +462,7 @@ def system_monitor():
 # Initialize everything
 def initialize_system():
     """Initialize all system components"""
-    logger.info("🚀 Starting Juggernaut AI System...")
+    logger.info("STARTUP: Starting Juggernaut AI System...")
     
     # Initialize components
     ai_success = initialize_ai_engine()
@@ -445,10 +473,10 @@ def initialize_system():
     monitor_thread = threading.Thread(target=system_monitor, daemon=True)
     monitor_thread.start()
     
-    logger.info("✅ System initialization complete")
-    logger.info(f"🤖 AI Engine: {'✅' if ai_success else '❌'}")
-    logger.info(f"📡 Communication: {'✅' if comm_success else '❌'}")
-    logger.info(f"🔥 Hot Reload: {'✅' if reload_success else '❌'}")
+    logger.info("STARTUP: System initialization complete")
+    logger.info(f"AI Engine: {'SUCCESS' if ai_success else 'FAILED'}")
+    logger.info(f"Communication: {'SUCCESS' if comm_success else 'FAILED'}")
+    logger.info(f"Hot Reload: {'SUCCESS' if reload_success else 'FAILED'}")
 
 if __name__ == '__main__':
     # Record start time
@@ -457,15 +485,12 @@ if __name__ == '__main__':
     # Initialize system
     initialize_system()
     
-    # PowerShell update script is already created separately
-    logger.info("📜 PowerShell update script available: update_juggernaut.ps1")
-    
     # Start Flask app
-    logger.info("🌐 Starting Flask server...")
-    logger.info("🎯 Access the interface at: http://localhost:5000")
-    logger.info("🔥 Hot reload enabled - GitHub changes will auto-update!")
-    logger.info("🎨 Red theme activated")
-    logger.info("🤖 Real Gemma 3 integration ready")
+    logger.info("SERVER: Starting Flask server...")
+    logger.info("ACCESS: Interface available at http://localhost:5000")
+    logger.info("FEATURES: Hot reload enabled - GitHub changes will auto-update")
+    logger.info("THEME: Red theme activated")
+    logger.info("AI: Real Gemma 3 integration ready")
     
     try:
         app.run(
@@ -475,11 +500,11 @@ if __name__ == '__main__':
             threaded=True
         )
     except KeyboardInterrupt:
-        logger.info("🛑 Shutting down Juggernaut AI...")
+        logger.info("SHUTDOWN: Shutting down Juggernaut AI...")
         if hot_reload_manager:
             hot_reload_manager.stop()
     except Exception as e:
-        logger.error(f"❌ Server error: {e}")
+        logger.error(f"SERVER ERROR: {e}")
     finally:
-        logger.info("👋 Juggernaut AI stopped")
+        logger.info("SHUTDOWN: Juggernaut AI stopped")
 

@@ -1,26 +1,23 @@
 @echo off
-REM Juggernaut AI - Taskbar Launcher (FIXED VERSION)
-REM Pin this file to your taskbar for one-click startup
+title JUGGERNAUT AI - One-Click Launcher
+color 0C
 
-title Juggernaut AI - Starting...
-
-echo.
 echo ========================================
-echo    JUGGERNAUT AI - STARTING SYSTEM
+echo    JUGGERNAUT AI - ONE-CLICK LAUNCHER
 echo ========================================
 echo.
 echo RTX 4070 SUPER AI System
-echo Real Gemma 2-9B-IT Integration
+echo Real Gemma 3 via Ollama
 echo Professional Monster UI
 echo.
 
-REM Change to the Juggernaut AI directory
-cd /d "D:\JuggernautAI"
+REM Change to Juggernaut directory
+cd /d D:\JuggernautAI
 
 REM Check if we're in the right directory
-if not exist "juggernaut_real_fixed.py" (
-    echo ERROR: Juggernaut AI files not found!
-    echo Please ensure this file is in D:\JuggernautAI
+if not exist "juggernaut_ollama.py" (
+    echo ERROR: Juggernaut AI files not found in D:\JuggernautAI
+    echo Please ensure the system is properly installed.
     echo.
     pause
     exit /b 1
@@ -28,20 +25,15 @@ if not exist "juggernaut_real_fixed.py" (
 
 echo Starting Juggernaut AI System...
 echo.
-echo Web interface will be available at:
-echo http://localhost:5000
+echo Web interface: http://localhost:5000
 echo.
-echo Press Ctrl+C to stop the system
-echo ========================================
-echo.
+echo System will start in 3 seconds...
+timeout /t 3 /nobreak >nul
 
-REM Start the FIXED Juggernaut AI system with correct model path
-python juggernaut_real_fixed.py
+REM Start the Ollama-based Juggernaut system
+python juggernaut_ollama.py
 
-REM If the system stops, show a message
 echo.
-echo ========================================
-echo Juggernaut AI system has stopped.
-echo ========================================
-pause
+echo System stopped. Press any key to exit...
+pause >nul
 

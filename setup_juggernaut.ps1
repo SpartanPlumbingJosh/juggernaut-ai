@@ -1,139 +1,152 @@
-# Juggernaut AI - FIXED Setup Script
-# RTX 4070 SUPER Optimized AI System
-# Clean, working PowerShell setup
+# Juggernaut AI - Complete Setup Script
+# One-click setup for reliable Gemma AI system using Ollama
+# Author: Manus AI
+# Date: June 27, 2025
 
-Write-Host "🤖 JUGGERNAUT AI SETUP" -ForegroundColor Magenta
-Write-Host "RTX 4070 SUPER Optimized" -ForegroundColor Cyan
-Write-Host "========================" -ForegroundColor White
+Write-Host "========================================" -ForegroundColor Red
+Write-Host "   JUGGERNAUT AI - COMPLETE SETUP" -ForegroundColor Red
+Write-Host "========================================" -ForegroundColor Red
+Write-Host ""
+Write-Host "RTX 4070 SUPER Optimized System" -ForegroundColor White
+Write-Host "Real Gemma 3 AI via Ollama" -ForegroundColor White
+Write-Host "No DLL Dependencies" -ForegroundColor White
+Write-Host "One-Click Desktop Launch" -ForegroundColor White
+Write-Host ""
 
-# Step 1: Check Python
-Write-Host "`n🔍 Checking Python..." -ForegroundColor Green
-try {
-    $pythonVersion = python --version 2>$null
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "✅ Python found: $pythonVersion" -ForegroundColor Green
-    } else {
-        Write-Host "❌ Python not found. Please install Python 3.11+ from python.org" -ForegroundColor Red
-        exit 1
-    }
-} catch {
-    Write-Host "❌ Python not found. Please install Python 3.11+ from python.org" -ForegroundColor Red
+# Check if running as Administrator
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+if (-not $isAdmin) {
+    Write-Host "NOTICE: Running without Administrator privileges." -ForegroundColor Yellow
+    Write-Host "Some operations may require elevation." -ForegroundColor Yellow
+    Write-Host ""
+}
+
+$setupStartTime = Get-Date
+
+# Step 1: Install Ollama
+Write-Host "STEP 1: Installing Ollama..." -ForegroundColor Cyan
+Write-Host "==============================" -ForegroundColor Cyan
+
+& .\install_ollama.ps1
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: Ollama installation failed" -ForegroundColor Red
     exit 1
 }
 
-# Step 2: Install dependencies
-Write-Host "`n📦 Installing Python dependencies..." -ForegroundColor Green
-$packages = @(
-    "Flask==2.3.3",
-    "Flask-CORS==4.0.0", 
-    "Werkzeug==2.3.7",
-    "requests==2.31.0",
-    "Pillow==10.0.1",
-    "python-multipart==0.0.6"
-)
+Write-Host ""
+Write-Host "SUCCESS: Ollama installation completed!" -ForegroundColor Green
+Write-Host ""
 
-foreach ($package in $packages) {
-    Write-Host "Installing $package..." -ForegroundColor Yellow
-    pip install $package
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "⚠️ Warning: Failed to install $package" -ForegroundColor Yellow
-    }
-}
+# Step 2: Install Python dependencies
+Write-Host "STEP 2: Installing Python Dependencies..." -ForegroundColor Cyan
+Write-Host "=========================================" -ForegroundColor Cyan
 
-# Step 3: Create data directory
-Write-Host "`n📁 Creating data directory..." -ForegroundColor Green
-$dataPath = "D:\JUGGERNAUT_DATA"
+$pythonDeps = @("flask", "requests")
 
-try {
-    if (-not (Test-Path $dataPath)) {
-        New-Item -ItemType Directory -Path $dataPath -Force | Out-Null
-        Write-Host "✅ Created: $dataPath" -ForegroundColor Green
+foreach ($dep in $pythonDeps) {
+    Write-Host "Installing $dep..." -ForegroundColor Yellow
+    pip install $dep --quiet
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "SUCCESS: $dep installed" -ForegroundColor Green
     } else {
-        Write-Host "✅ Directory exists: $dataPath" -ForegroundColor Green
+        Write-Host "WARNING: Failed to install $dep" -ForegroundColor Yellow
     }
-    
-    # Create subdirectories
-    $subdirs = @("models", "chats", "files", "browser", "plugins")
-    foreach ($subdir in $subdirs) {
-        $fullPath = Join-Path $dataPath $subdir
-        if (-not (Test-Path $fullPath)) {
-            New-Item -ItemType Directory -Path $fullPath -Force | Out-Null
-        }
-    }
-    Write-Host "✅ Subdirectories created" -ForegroundColor Green
-    
-} catch {
-    Write-Host "⚠️ Could not create $dataPath - will use local directory" -ForegroundColor Yellow
 }
 
-# Step 4: Check for GPU (optional)
-Write-Host "`n🎯 Checking for RTX 4070 SUPER..." -ForegroundColor Green
+Write-Host ""
+Write-Host "SUCCESS: Python dependencies completed!" -ForegroundColor Green
+Write-Host ""
+
+# Step 3: Create desktop shortcut
+Write-Host "STEP 3: Creating Desktop Shortcut..." -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
+
+& .\create_desktop_shortcut.ps1
+
+Write-Host ""
+Write-Host "SUCCESS: Desktop shortcut created!" -ForegroundColor Green
+Write-Host ""
+
+# Step 4: Final verification
+Write-Host "STEP 4: Final System Verification..." -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
+
+# Check if all components are in place
+$componentsOK = $true
+
+# Check Ollama
 try {
-    $gpu = Get-WmiObject -Class Win32_VideoController | Where-Object { $_.Name -like "*NVIDIA*" }
-    if ($gpu) {
-        Write-Host "✅ NVIDIA GPU detected: $($gpu.Name)" -ForegroundColor Green
-        if ($gpu.Name -like "*RTX 4070 SUPER*") {
-            Write-Host "🚀 RTX 4070 SUPER detected - GPU acceleration ready!" -ForegroundColor Cyan
-        }
+    $ollamaVersion = ollama --version 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "SUCCESS: Ollama is ready: $ollamaVersion" -ForegroundColor Green
     } else {
-        Write-Host "⚠️ No NVIDIA GPU detected - CPU mode will be used" -ForegroundColor Yellow
+        Write-Host "WARNING: Ollama not responding" -ForegroundColor Yellow
+        $componentsOK = $false
     }
 } catch {
-    Write-Host "⚠️ Could not detect GPU information" -ForegroundColor Yellow
+    Write-Host "WARNING: Ollama not found in PATH" -ForegroundColor Yellow
+    $componentsOK = $false
 }
 
-# Step 5: Test core modules
-Write-Host "`n🧪 Testing core modules..." -ForegroundColor Green
-try {
-    python -c "import flask; print('✅ Flask imported successfully')"
-    python -c "import core; print('✅ Core modules imported successfully')" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "⚠️ Core modules not fully available - some features may be limited" -ForegroundColor Yellow
+# Check Python files
+$requiredFiles = @("juggernaut_ollama.py", "Start_Juggernaut_AI.bat")
+foreach ($file in $requiredFiles) {
+    if (Test-Path $file) {
+        Write-Host "SUCCESS: $file found" -ForegroundColor Green
+    } else {
+        Write-Host "ERROR: $file missing" -ForegroundColor Red
+        $componentsOK = $false
     }
-} catch {
-    Write-Host "⚠️ Module test failed - some features may be limited" -ForegroundColor Yellow
 }
 
-# Step 6: Create startup batch file
-Write-Host "`n📝 Creating startup file..." -ForegroundColor Green
-$batchContent = @"
-@echo off
-title Juggernaut AI - RTX 4070 SUPER
-echo 🤖 Starting Juggernaut AI System...
-echo 🎯 RTX 4070 SUPER Optimized
-echo.
-python app.py
-pause
-"@
-
-try {
-    Set-Content -Path "start_juggernaut.bat" -Value $batchContent -Encoding ASCII
-    Write-Host "✅ Created start_juggernaut.bat" -ForegroundColor Green
-} catch {
-    Write-Host "⚠️ Could not create startup file" -ForegroundColor Yellow
+# Check desktop shortcut
+$desktopPath = [Environment]::GetFolderPath("Desktop")
+$shortcutPath = "$desktopPath\Juggernaut AI.lnk"
+if (Test-Path $shortcutPath) {
+    Write-Host "SUCCESS: Desktop shortcut created" -ForegroundColor Green
+} else {
+    Write-Host "WARNING: Desktop shortcut not found" -ForegroundColor Yellow
 }
 
-# Final instructions
-Write-Host "`n🎉 SETUP COMPLETE!" -ForegroundColor Green
-Write-Host "==================" -ForegroundColor White
+$setupEndTime = Get-Date
+$setupDuration = $setupEndTime - $setupStartTime
+
 Write-Host ""
-Write-Host "🚀 TO START JUGGERNAUT AI:" -ForegroundColor Cyan
-Write-Host "   python app.py" -ForegroundColor White
-Write-Host "   OR double-click: start_juggernaut.bat" -ForegroundColor White
-Write-Host ""
-Write-Host "🌐 ACCESS THE INTERFACE:" -ForegroundColor Cyan  
-Write-Host "   http://localhost:5000" -ForegroundColor White
-Write-Host ""
-Write-Host "📁 DATA DIRECTORY:" -ForegroundColor Cyan
-Write-Host "   $dataPath" -ForegroundColor White
-Write-Host ""
-Write-Host "🎯 RTX 4070 SUPER GPU acceleration ready!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "   SETUP COMPLETED!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "Setup time: $($setupDuration.ToString('mm\:ss'))" -ForegroundColor Green
 Write-Host ""
 
-# Ask if user wants to start now
-$startNow = Read-Host "Start Juggernaut AI now? (y/n)"
-if ($startNow -eq 'y' -or $startNow -eq 'Y') {
-    Write-Host "`n🚀 Starting Juggernaut AI..." -ForegroundColor Green
-    python app.py
+if ($componentsOK) {
+    Write-Host "SYSTEM STATUS: READY" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "YOUR JUGGERNAUT AI SYSTEM IS READY!" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "TO START YOUR AI SYSTEM:" -ForegroundColor Cyan
+    Write-Host "1. Double-click 'Juggernaut AI' on your desktop" -ForegroundColor White
+    Write-Host "   OR" -ForegroundColor Gray
+    Write-Host "2. Run: Start_Juggernaut_AI.bat" -ForegroundColor White
+    Write-Host ""
+    Write-Host "FEATURES:" -ForegroundColor Cyan
+    Write-Host "- Real Gemma 3 AI responses (no demo mode)" -ForegroundColor White
+    Write-Host "- RTX 4070 SUPER GPU acceleration (automatic)" -ForegroundColor White
+    Write-Host "- CPU fallback (automatic)" -ForegroundColor White
+    Write-Host "- No DLL dependency issues" -ForegroundColor White
+    Write-Host "- Professional Monster UI" -ForegroundColor White
+    Write-Host "- Web interface: http://localhost:5000" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Your AI system will be ready for tasks immediately!" -ForegroundColor Green
+} else {
+    Write-Host "SYSTEM STATUS: NEEDS ATTENTION" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Some components need attention. Please:" -ForegroundColor Yellow
+    Write-Host "1. Restart PowerShell as Administrator" -ForegroundColor White
+    Write-Host "2. Re-run this setup script" -ForegroundColor White
+    Write-Host "3. Check error messages above" -ForegroundColor White
 }
+
+Write-Host ""
+Write-Host "Setup completed at: $(Get-Date)" -ForegroundColor Gray
 

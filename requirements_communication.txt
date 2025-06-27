@@ -1,0 +1,17 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+requests==2.31.0
+Pillow==10.0.1
+python-multipart==0.0.6
+
+# Communication dependencies
+twilio==8.10.0
+secure-smtplib==0.1.1
+
+# Optional AI dependencies (install manually for full Gemma support)
+# llama-cpp-python (install with: pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121)
+
+# Development dependencies
+python-dotenv==1.0.0
+

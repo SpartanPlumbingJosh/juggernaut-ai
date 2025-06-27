@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juggernaut AI - Communication Setup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <style>
+        .setup-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .setup-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(0, 255, 0, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        
+        .setup-section h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-family: inherit;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 255, 0, 0.2);
+        }
+        
+        .setup-btn {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .setup-btn:hover {
+            background: #00cc00;
+            transform: translateY(-1px);
+        }
+        
+        .setup-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-indicator.active {
+            background: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+        
+        .status-indicator.inactive {
+            background: #666;
+        }
+        
+        .help-text {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+        
+        .communication-log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .log-entry {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry .timestamp {
+            color: #888;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="setup-container">
+            <h1>📧 Communication Setup</h1>
+            <p>Configure email and SMS communication to interact with Juggernaut AI remotely!</p>
+            
+            <!-- Email Setup -->
+            <div class="setup-section">
+                <h3>
+                    <span class="status-indicator" id="email-status"></span>
+                    📧 Email Configuration
+                </h3>
+                
+                <div class="form-group">
+                    <label for="email-address">Gmail Address:</label>
+                    <input type="email" id="email-address" placeholder="your.email@gmail.com">
+                    <div class="help-text">Use your Gmail address for email communication</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email-password">App Password:</label>
+                    <input type="password" id="email-password" placeholder="Gmail App Password">
+                    <div class="help-text">
+                        Generate an App Password in Gmail Settings → Security → 2-Step Verification → App passwords
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="authorized-emails">Authorized Email Addresses:</label>
+                    <textarea id="authorized-emails" rows="3" placeholder="email1@example.com, email2@example.com"></textarea>
+                    <div class="help-text">Comma-separated list of emails that can send messages to Juggernaut AI</div>
+                </div>
+                
+                <button class="setup-btn" onclick="setupEmail()">Configure Email</button>
+            </div>
+            
+            <!-- SMS Setup -->
+            <div class="setup-section">
+                <h3>
+                    <span class="status-indicator" id="sms-status"></span>
+                    📱 SMS Configuration (Twilio)
+                </h3>
+                
+                <div class="form-group">
+                    <label for="twilio-sid">Twilio Account SID:</label>
+                    <input type="text" id="twilio-sid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                    <div class="help-text">Get from Twilio Console Dashboard</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="twilio-token">Twilio Auth Token:</label>
+                    <input type="password" id="twilio-token" placeholder="Auth Token">
+                    <div class="help-text">Get from Twilio Console Dashboard</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="twilio-number">Twilio Phone Number:</label>
+                    <input type="tel" id="twilio-number" placeholder="+1234567890">
+                    <div class="help-text">Your Twilio phone number (with country code)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="your-number">Your Phone Number:</label>
+                    <input type="tel" id="your-number" placeholder="+1234567890">
+                    <div class="help-text">Your personal phone number (with country code)</div>
+                </div>
+                
+                <button class="setup-btn" onclick="setupSMS()">Configure SMS</button>
+            </div>
+            
+            <!-- Communication Control -->
+            <div class="setup-section">
+                <h3>
+                    <span class="status-indicator" id="monitoring-status"></span>
+                    🎛️ Communication Control
+                </h3>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <button class="setup-btn" onclick="startCommunication()">Start Monitoring</button>
+                    <button class="setup-btn" onclick="stopCommunication()">Stop Monitoring</button>
+                    <button class="setup-btn" onclick="refreshStatus()">Refresh Status</button>
+                </div>
+                
+                <div id="communication-status">
+                    <p>Loading status...</p>
+                </div>
+            </div>
+            
+            <!-- Communication Log -->
+            <div class="setup-section">
+                <h3>📋 Recent Communications</h3>
+                <button class="setup-btn" onclick="refreshLog()">Refresh Log</button>
+                <div class="communication-log" id="communication-log">
+                    <p>Loading communication log...</p>
+                </div>
+            </div>
+            
+            <!-- Test SMS -->
+            <div class="setup-section">
+                <h3>🧪 Test SMS</h3>
+                <div class="form-group">
+                    <label for="test-phone">Phone Number:</label>
+                    <input type="tel" id="test-phone" placeholder="+1234567890">
+                </div>
+                <div class="form-group">
+                    <label for="test-message">Message:</label>
+                    <input type="text" id="test-message" placeholder="Test message from Juggernaut AI">
+                </div>
+                <button class="setup-btn" onclick="sendTestSMS()">Send Test SMS</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="/" class="setup-btn">← Back to Juggernaut AI</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Communication setup functions
+        async function setupEmail() {
+            const email = document.getElementById('email-address').value;
+            const password = document.getElementById('email-password').value;
+            const authorizedEmails = document.getElementById('authorized-emails').value
+                .split(',').map(e => e.trim()).filter(e => e);
+            
+            if (!email || !password) {
+                alert('Please fill in email and password');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/communication/setup/email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        authorized_emails: authorizedEmails
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Email configured successfully!');
+                    refreshStatus();
+                } else {
+                    alert('Email setup failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('Email setup error: ' + error.message);
+            }
+        }
+        
+        async function setupSMS() {
+            const accountSid = document.getElementById('twilio-sid').value;
+            const authToken = document.getElementById('twilio-token').value;
+            const twilioNumber = document.getElementById('twilio-number').value;
+            const yourNumber = document.getElementById('your-number').value;
+            
+            if (!accountSid || !authToken || !twilioNumber || !yourNumber) {
+                alert('Please fill in all SMS fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/communication/setup/sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        account_sid: accountSid,
+                        auth_token: authToken,
+                        twilio_number: twilioNumber,
+                        your_number: yourNumber
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('SMS configured successfully!');
+                    refreshStatus();
+                } else {
+                    alert('SMS setup failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('SMS setup error: ' + error.message);
+            }
+        }
+        
+        async function startCommunication() {
+            try {
+                const response = await fetch('/api/communication/start', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Communication monitoring started!');
+                    refreshStatus();
+                } else {
+                    alert('Failed to start monitoring: ' + result.error);
+                }
+            } catch (error) {
+                alert('Start communication error: ' + error.message);
+            }
+        }
+        
+        async function stopCommunication() {
+            try {
+                const response = await fetch('/api/communication/stop', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Communication monitoring stopped!');
+                    refreshStatus();
+                } else {
+                    alert('Failed to stop monitoring: ' + result.error);
+                }
+            } catch (error) {
+                alert('Stop communication error: ' + error.message);
+            }
+        }
+        
+        async function refreshStatus() {
+            try {
+                const response = await fetch('/api/communication/status');
+                const status = await response.json();
+                
+                // Update status indicators
+                document.getElementById('email-status').className = 
+                    'status-indicator ' + (status.email_enabled ? 'active' : 'inactive');
+                document.getElementById('sms-status').className = 
+                    'status-indicator ' + (status.sms_enabled ? 'active' : 'inactive');
+                document.getElementById('monitoring-status').className = 
+                    'status-indicator ' + (status.monitoring_active ? 'active' : 'inactive');
+                
+                // Update status display
+                const statusDiv = document.getElementById('communication-status');
+                statusDiv.innerHTML = `
+                    <p><strong>Email:</strong> ${status.email_enabled ? '✅ Enabled' : '❌ Disabled'}</p>
+                    <p><strong>SMS:</strong> ${status.sms_enabled ? '✅ Enabled' : '❌ Disabled'}</p>
+                    <p><strong>Monitoring:</strong> ${status.monitoring_active ? '🟢 Active' : '🔴 Inactive'}</p>
+                    <p><strong>Daily Messages:</strong> Email: ${status.daily_message_count.email}, SMS: ${status.daily_message_count.sms}</p>
+                    <p><strong>Authorized:</strong> ${status.authorized_emails} emails, ${status.authorized_phones} phones</p>
+                    <p><strong>Daily Limit:</strong> ${status.daily_limit} messages</p>
+                `;
+                
+            } catch (error) {
+                console.error('Status refresh error:', error);
+            }
+        }
+        
+        async function refreshLog() {
+            try {
+                const response = await fetch('/api/communication/log?limit=20');
+                const data = await response.json();
+                
+                const logDiv = document.getElementById('communication-log');
+                
+                if (data.log && data.log.length > 0) {
+                    logDiv.innerHTML = data.log.map(entry => `
+                        <div class="log-entry">
+                            <div><strong>${entry.type.toUpperCase()}:</strong> ${entry.sender}</div>
+                            <div>Message: ${entry.message}</div>
+                            <div>Response: ${entry.response}</div>
+                            <div class="timestamp">${new Date(entry.timestamp).toLocaleString()}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    logDiv.innerHTML = '<p>No communication log entries yet.</p>';
+                }
+                
+            } catch (error) {
+                console.error('Log refresh error:', error);
+                document.getElementById('communication-log').innerHTML = '<p>Error loading log.</p>';
+            }
+        }
+        
+        async function sendTestSMS() {
+            const phoneNumber = document.getElementById('test-phone').value;
+            const message = document.getElementById('test-message').value;
+            
+            if (!phoneNumber || !message) {
+                alert('Please fill in phone number and message');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/communication/send/sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_number: phoneNumber,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Test SMS sent successfully!');
+                } else {
+                    alert('SMS send failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('SMS send error: ' + error.message);
+            }
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStatus();
+            refreshLog();
+        });
+    </script>
+</body>
+</html>
+

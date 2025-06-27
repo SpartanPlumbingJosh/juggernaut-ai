@@ -1,0 +1,14 @@
+[
+  {
+    "role": "Josh",
+    "content": "Hello Juggernaut AI! Can you tell me about your Gemma model capabilities and learning features?",
+    "timestamp": "2025-06-26T19:53:22.286443",
+    "id": 1
+  },
+  {
+    "role": "Juggernaut",
+    "content": "I'm processing: 'Hello Juggernaut AI! Can you tell me about your Gemma model capabilities and learning features?' in demo mode. Your RTX 4070 SUPER is ready for GPU acceleration once the Gemma model is properly installed.",
+    "timestamp": "2025-06-26T19:53:22.286980",
+    "id": 2
+  }
+]

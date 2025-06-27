@@ -1,38 +1,40 @@
-# REAL Juggernaut AI Requirements
-# NO DEMO MODE - REAL AI RESPONSES
+# REAL Juggernaut AI Requirements - Python 3.11 Compatible
+# Updated to remove incompatible dependencies
 
-# Core Flask application
+# Core Flask web framework
 Flask==2.3.3
 Werkzeug==2.3.7
 
-# REAL Gemma model integration
-llama-cpp-python[cuda]==0.2.11
+# REAL AI Engine - llama-cpp-python with CUDA support for RTX 4070 SUPER
+llama-cpp-python[cuda]>=0.2.11
 
 # Data processing
-numpy==1.24.3
-pandas==2.0.3
+numpy>=1.24.0
+pandas>=2.0.0
 
 # HTTP requests
-requests==2.31.0
+requests>=2.31.0
 
-# JSON handling
-jsonschema==4.19.0
+# JSON schema validation
+jsonschema>=4.19.0
 
-# File handling
-pathlib2==2.3.7
-
-# Logging
-colorlog==6.7.0
+# Enhanced logging
+colorlog>=6.7.0
 
 # System monitoring
-psutil==5.9.5
+psutil>=5.9.0
 
-# Threading
-concurrent-futures==3.1.1
+# File handling
+pathlib2>=2.3.7
 
-# Optional: GPU monitoring (if available)
-# nvidia-ml-py3==7.352.0
+# Threading and async (built into Python 3.11, no need to install)
+# concurrent-futures - REMOVED (built into Python 3.11+)
 
-# Development tools
-python-dotenv==1.0.0
+# Optional: Enhanced performance
+# accelerate  # Uncomment if needed for model optimization
+# transformers  # Uncomment if using Hugging Face models
+
+# Development tools (optional)
+# ipython  # Enhanced Python shell
+# jupyter  # Notebook environment
 

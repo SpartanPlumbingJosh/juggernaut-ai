@@ -172,7 +172,7 @@ def get_system_metrics():
 @app.route('/')
 def index():
     """Main application page"""
-    return render_template('index.html')
+    return render_template('advanced_index.html')
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -453,8 +453,12 @@ if __name__ == '__main__':
     # Initialize system
     initialize_system()
     
-    # PowerShell update script is already created separately
-    logger.info("📜 PowerShell update script available: update_juggernaut.ps1")
+    # Create PowerShell update script
+    update_script_path = Path("update_juggernaut.ps1")
+    with open(update_script_path, 'w', encoding='utf-8') as f:
+        f.write(POWERSHELL_UPDATE_SCRIPT)
+    
+    logger.info("📜 PowerShell update script created: update_juggernaut.ps1")
     
     # Start Flask app
     logger.info("🌐 Starting Flask server...")

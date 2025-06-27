@@ -1,0 +1,23 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+requests==2.31.0
+Pillow==10.0.1
+python-multipart==0.0.6
+psutil==5.9.6
+
+# Hot Reload Dependencies
+watchdog==3.0.0
+importlib-metadata==6.8.0
+
+# AI Dependencies (optional - for full Gemma 3 integration)
+# llama-cpp-python>=0.2.11
+# transformers>=4.35.0
+# torch>=2.1.0
+
+# Communication Dependencies
+python-dotenv==1.0.0
+
+# Development Dependencies
+colorama==0.4.6
+

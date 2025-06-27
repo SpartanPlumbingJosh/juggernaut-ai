@@ -1,0 +1,34 @@
+# JUGGERNAUT AI - Ultimate System Requirements
+# RTX 4070 SUPER Optimized
+
+# Core Flask framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# AI Model Support (CUDA-enabled for RTX 4070 SUPER)
+# Note: llama-cpp-python will be installed via the enhanced installer
+# with proper CUDA environment variables
+
+# Data handling
+numpy>=1.20.0
+pandas>=1.3.0
+requests>=2.25.0
+
+# JSON schema validation
+jsonschema>=3.2.0
+
+# Logging and monitoring
+colorlog>=6.0.0
+psutil>=5.8.0
+
+# File handling
+pathlib2>=2.3.0
+
+# Date/time utilities
+python-dateutil>=2.8.0
+
+# Optional: For advanced features
+# Pillow>=8.0.0  # Image processing
+# beautifulsoup4>=4.9.0  # Web scraping
+# markdown>=3.3.0  # Markdown processing
+

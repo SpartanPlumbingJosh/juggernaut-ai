@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 JUGGERNAUT AI - FIXED WEB INTERFACE
-Real execution, working UI, no bullshit
+Optimized for Gemma3:12b - Real execution, working UI, no bullshit
 """
 
 import os
@@ -23,7 +23,7 @@ class JuggernautWebFixed:
     def __init__(self):
         self.app = Flask(__name__)
         self.ollama_url = "http://localhost:11434"
-        self.model = "gemma2:27b"
+        self.model = "gemma3:12b"
         self.setup_routes()
         
     def check_ollama(self):
@@ -34,15 +34,14 @@ class JuggernautWebFixed:
                 models = response.json().get('models', [])
                 available_models = [model['name'] for model in models]
                 
-                # Find best Gemma model
-                gemma_models = ['gemma2:27b', 'gemma2:9b', 'gemma2', 'gemma:7b', 'gemma']
-                for model in gemma_models:
-                    if model in available_models:
-                        self.model = model
-                        logger.info(f"Using model: {model}")
-                        return True
+                # Check for Gemma3:12b model specifically
+                if 'gemma3:12b' in available_models:
+                    self.model = 'gemma3:12b'
+                    logger.info(f"Using model: {self.model}")
+                    return True
                         
-                logger.error(f"No Gemma models found. Available: {available_models}")
+                logger.error(f"Gemma3:12b model not found. Available: {available_models}")
+                logger.error("Please ensure Gemma3:12b is installed: ollama pull gemma3:12b")
                 return False
             return False
         except Exception as e:
@@ -106,22 +105,28 @@ CRITICAL RULES:
 2. When asked to execute commands, tell the user you'll execute them via the system
 3. Be direct and honest about what you can and cannot do
 4. Provide real, accurate information only
-5. If you need to execute a command, clearly state what command you would run
+5. Keep responses concise and under 200 words
+6. If you need to execute a command, clearly state what command you would run
 
 You have access to real system information and can execute real commands through the interface."""
 
-            # Add real system info to context
-            sys_info = self.get_real_system_info()
-            enhanced_message = f"REAL SYSTEM INFO: {json.dumps(sys_info, indent=2)}\n\nUSER REQUEST: {message}"
+            # Simple, direct message without heavy system info
+            enhanced_message = f"USER REQUEST: {message}\n\nProvide a direct, concise response."
             
             payload = {
                 "model": self.model,
                 "prompt": enhanced_message,
                 "system": system_prompt,
-                "stream": False
+                "stream": False,
+                "options": {
+                    "num_predict": 200,  # Limit response length
+                    "temperature": 0.7,  # Balanced creativity
+                    "top_p": 0.9,       # Focus responses
+                    "stop": ["\n\n\n"]  # Stop at triple newlines
+                }
             }
             
-            response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=60)
+            response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=20)
             
             if response.status_code == 200:
                 return response.json().get('response', 'No response received')
@@ -256,8 +261,8 @@ HTML_TEMPLATE = '''
 </head>
 <body>
     <div class="header">
-        <h1>🚀 JUGGERNAUT AI - FIXED INTERFACE</h1>
-        <p>Real execution, working UI, no simulation bullshit</p>
+        <h1>🚀 JUGGERNAUT AI - OPTIMIZED FOR GEMMA3:12B</h1>
+        <p>Real execution, working UI, fast responses, no simulation</p>
     </div>
     
     <div class="chat-container">
@@ -383,10 +388,10 @@ HTML_TEMPLATE = '''
 def main():
     app_instance = JuggernautWebFixed()
     
-    print("🚀 JUGGERNAUT AI - FIXED WEB INTERFACE")
-    print("=" * 50)
-    print("Real execution, working UI, no simulation")
-    print("=" * 50)
+    print("🚀 JUGGERNAUT AI - OPTIMIZED FOR GEMMA3:12B")
+    print("=" * 55)
+    print("Real execution, working UI, fast responses, no simulation")
+    print("=" * 55)
     
     if not app_instance.check_ollama():
         print("❌ Cannot connect to Ollama. Please start Ollama first.")
